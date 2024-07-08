@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Real-time Object Detection</title>
+    <style>
+      .container {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        height: 100vh;
+        background-color: #f1f1f1;
+        font-family: Arial, sans-serif;
+      }
+
+      .video-feed {
+        width: 640px;
+        height: 480px;
+        border: 1px solid #ccc;
+        margin-bottom: 20px;
+      }
+
+      .objects {
+        width: 640px;
+        padding: 10px;
+        background-color: #fff;
+      }
+
+      .label {
+        margin-bottom: 5px;
+      }
+
+      .confidence {
+        color: #888;
+      }
+
+      .counts {
+        margin-top: 20px;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <div class="video-feed">
+        <img
+          id="video"
+          src="{{ url_for('video_feed') }}"
+          width="100%"
+          height="100%"
+          alt="Video Feed"
+        />
+      </div>
+      <ul id="object-list"></ul>
+      <div class="counts">
+        <p id="car-count">Cars: 0</p>
+        <p id="person-count">Persons: 0</p>
+      </div>
+    </div>
+
+    <script>
+      const carCountElement = document.getElementById("car-count");
+      const personCountElement = document.getElementById("person-count");
+
+      const eventSource = new EventSource("{{ url_for('video_feed') }}");
+      eventSource.onmessage = function (event) {
+        const data = JSON.parse(event.data);
+        carCountElement.textContent = `Cars: ${data.cars}`;
+        personCountElement.textContent = `Persons: ${data.persons}`;
+      };
+    </script>
+  </body>
+</html>
